@@ -78,6 +78,54 @@ cutlass_example_add_executable(
   TEST_SMALL_LARGE_GROUP
   TEST_RANDOM_PERF
   TEST_RANDOM_PERF_LARGE_GROUP
-)  
+)
+
+cutlass_example_add_executable(
+  79e_blackwell_geforce_nvfp4_outbf16_grouped_gemm
+  79e_backwell_geforce_nvfp4_outbf16_gemm.cu
+  TEST_COMMAND_OPTIONS
+  TEST_RANDOM
+  TEST_RANDOM_LARGE_GROUP
+  TEST_EPILOGUE
+  TEST_EPILOGUE_LARGE_GROUP
+  TEST_FIXED
+  TEST_FIXED_LARGE_GROUP
+  TEST_SMALL
+  TEST_SMALL_LARGE_GROUP
+  TEST_RANDOM_PERF
+  TEST_RANDOM_PERF_LARGE_GROUP
+)
+
+cutlass_example_add_executable(
+  79f_blackwell_geforce_fp8_outbf16_grouped_gemm
+  79f_backwell_geforce_fp8_outbf16_gemm.cu
+  TEST_COMMAND_OPTIONS
+  TEST_RANDOM
+  TEST_RANDOM_LARGE_GROUP
+  TEST_EPILOGUE
+  TEST_EPILOGUE_LARGE_GROUP
+  TEST_FIXED
+  TEST_FIXED_LARGE_GROUP
+  TEST_SMALL
+  TEST_SMALL_LARGE_GROUP
+  TEST_RANDOM_PERF
+  TEST_RANDOM_PERF_LARGE_GROUP
+)
+
+cutlass_example_add_executable(
+  79g_blackwell_geforce_fp8_grouped_gemm
+  79g_blackwell_geforce_fp8_grouped_gemm.cu
+  TEST_COMMAND_OPTIONS
+  TEST_RANDOM
+  TEST_RANDOM_LARGE_GROUP
+  TEST_EPILOGUE
+  TEST_EPILOGUE_LARGE_GROUP
+  TEST_FIXED
+  TEST_FIXED_LARGE_GROUP
+  TEST_SMALL
+  TEST_SMALL_LARGE_GROUP
+  TEST_RANDOM_PERF
+  TEST_RANDOM_PERF_LARGE_GROUP
+)
 
 endif()

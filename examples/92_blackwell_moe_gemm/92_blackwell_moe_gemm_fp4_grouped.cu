@@ -673,11 +673,11 @@ int main(int argc, char const **args) {
     // Returning zero so this test passes on older Toolkits. Its actions are no-op.
     return 0;
   }
-  
-  if (!(props.major == 10 && props.minor == 0)) {
-    std::cerr << "This example requires a GPU of NVIDIA's Blackwell architecture (compute capability 100)." << std::endl;
-    return 0;
-  }
+  printf("major: %d, minor: %d\n", props.major, props.minor);
+  // if (!(props.major == 10 && props.minor == 0)) {
+  //   std::cerr << "This example requires a GPU of NVIDIA's Blackwell architecture (compute capability 100)." << std::endl;
+  //   return 0;
+  // }
 
   //
   // Parse options

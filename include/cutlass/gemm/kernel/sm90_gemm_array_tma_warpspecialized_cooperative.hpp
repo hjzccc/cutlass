@@ -469,7 +469,7 @@ public:
     CollectiveEpilogue collective_epilogue(params.epilogue, shared_storage.tensors.epilogue);
 
     int thread_idx = int(threadIdx.x);
-    int lane_idx = canonical_lane_idx();
+    int lane_idx = canonical_lane_idx(); //threads position within the warp
     int warp_idx = canonical_warp_idx_sync();
     int warp_idx_in_warp_group = warp_idx % NumWarpsPerWarpGroup;
     int warp_group_thread_idx = thread_idx % NumThreadsPerWarpGroup;

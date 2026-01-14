@@ -28,7 +28,6 @@
 
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 cmake_policy(SET CMP0112 NEW)
-
 if(cutlass_LOADED)
   # If CUTLASS has been previously fetched and loaded, don't do it again.
   return()

@@ -180,11 +180,12 @@ struct CollectiveBuilder<
   // A single indivisible block will hold 4 scale factors of 128 rows/columns (A/B matrix).
   // 4 is chosen to make consecutive 32bits of data to have scale factors for only a single row (col). 32bits corresponds to the TMEM word size 
   using Blk_MN    = typename Sm1xxBlkScaledConfig::Blk_MN;
+  // using Blk_MN    = _64;
   using Blk_SF    = typename Sm1xxBlkScaledConfig::Blk_SF; 
   using Blk_Elems = decltype(Blk_MN{} * Blk_SF{});
 
   // Basic storage block for new Scaling Factor Layouts
-  using mnBasicBlockShape  =  Shape<_32,_4>;
+  using mnBasicBlockShape  =  Shape<_16,_4>;
   using mnBasicBlockStride = Stride<_16,_4>;
   using kBasicBlockShape  = Shape<Int<SFVectorSize>, Int<MMA_NSF>>;
   using kBasicBlockStride = Stride<_0, _1>;

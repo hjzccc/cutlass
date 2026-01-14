@@ -2,3 +2,6 @@
 __pycache__/
 cutlass_library.egg-info/
 /build*
+CMakeFiles/
+CMakeCache.txt
+*.nsys-rep

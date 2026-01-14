@@ -1,0 +1,8 @@
+Summary Table
+File	Line	Change
+sm100_blockscaled_layout.hpp	51	Blk_MN = _64 (you did this)
+sm100_blockscaled_layout.hpp	54-57	SfKMajorAtom, SfMNMajorAtom: _32→_16, _16→_8
+sm100_blockscaled_layout.hpp	148-149	mnBasicBlockShape: _32→_16, stride _16→_8
+sm100_blockscaled_layout.hpp	225-228	Blk_M = _64, SfAtom: _32→_16, _16→_8
+sm120_blockscaled_mma_builder.inl	188-189	mnBasicBlockShape: _32→_16, stride _16→_8
+sm120_blockscaled_sparse_mma_builder.inl	280	mnBasicBlockShape: _32→_16 (only if using sparse)

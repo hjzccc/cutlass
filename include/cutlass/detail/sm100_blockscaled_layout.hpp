@@ -48,12 +48,12 @@ using namespace cute;
 template<int SFVecSize, UMMA::Major major = UMMA::Major::K>
 struct Sm1xxBlockScaledBasicChunk {
 
-  using Blk_MN    = _128;
+  using Blk_MN    = _64;
   using Blk_SF    =   _4; 
 
-  using SfKMajorAtom  = Layout< Shape< Shape<_32,_4>, Shape<Int<SFVecSize>, _4>>, 
+  using SfKMajorAtom  = Layout< Shape< Shape<_16,_4>, Shape<Int<SFVecSize>, _4>>, 
                                Stride<Stride<_16,_4>, Stride<           _0, _1>>>;
-  using SfMNMajorAtom = Layout< Shape< Shape<Int<SFVecSize>, _4>,  Shape<_32,_4>>, 
+  using SfMNMajorAtom = Layout< Shape< Shape<Int<SFVecSize>, _4>,  Shape<_16,_4>>, 
                                Stride<Stride<            _0, _1>, Stride<_16,_4>>>;
   using SfAtom    = cute::conditional_t<major == UMMA::Major::K, SfKMajorAtom, SfMNMajorAtom>;
 };
@@ -110,7 +110,7 @@ struct Sm1xxBlockScaledConfig {
 
     constexpr int MMA_NSF = TiledMma::K / SFVecSize;
     // Basic storage block for new Scaling Factor Layouts
-    using mnBasicBlockShape  =  Shape<_32,_4>;
+    using mnBasicBlockShape  =  Shape<_16,_4>;
     using mnBasicBlockStride = Stride<_16,_4>;
     using kBasicBlockShape  = Shape<Int<SFVecSize>, Int<MMA_NSF>>;
     using kBasicBlockStride = Stride<_0, _1>;
@@ -145,7 +145,7 @@ struct Sm1xxBlockScaledConfig {
 
     constexpr int MMA_NSF = TiledMma::K / SFVecSize;
     // Basic storage block for new Scaling Factor Layouts
-    using mnBasicBlockShape  =  Shape<_32,_4>;
+    using mnBasicBlockShape  =  Shape<_16,_4>;
     using mnBasicBlockStride = Stride<_16,_4>;
     using kBasicBlockShape  = Shape<Int<SFVecSize>, Int<MMA_NSF>>;
     using kBasicBlockStride = Stride<_0, _1>;
@@ -222,9 +222,9 @@ struct Sm1xxBlockScaledOutputConfig {
 struct Sm1xxBlockScaledTensorConfig {
   // k-major order
   // The blockscaled tensor does not need to know vectorsize
-  using Blk_M = _128;
+  using Blk_M = _64;
   using Blk_N =   _4; 
-  using SfAtom = Layout< Shape< Shape<_32,_4>,  Shape<_4>>, 
+  using SfAtom = Layout< Shape< Shape<_16,_4>,  Shape<_4>>, 
                         Stride<Stride<_16,_4>, Stride<_1>>>;
 
   template <class ProblemShape>
