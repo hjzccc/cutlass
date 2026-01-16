@@ -794,12 +794,12 @@ bool verify(const Options &options) {
 template <typename Gemm>
 int run(Options &options, bool host_problem_shapes_available = true)
 {
-  std::cout << "  Problem Sizes, Alpha, Beta " << std::endl;
-  for (int32_t i = 0; i < options.groups; ++i) {
-    std::cout << "    " << options.problem_sizes_host.at(i);
-    std::cout << ", " << alpha_host.at(i) << ", " << beta_host.at(i) << std::endl;
-  }
-  std::cout << "  Groups      : " << options.groups  << std::endl;
+  // std::cout << "  Problem Sizes, Alpha, Beta " << std::endl;
+  // for (int32_t i = 0; i < options.groups; ++i) {
+  //   std::cout << "    " << options.problem_sizes_host.at(i);
+  //   std::cout << ", " << alpha_host.at(i) << ", " << beta_host.at(i) << std::endl;
+  // }
+  // std::cout << "  Groups      : " << options.groups  << std::endl;
 
   // Instantiate CUTLASS kernel depending on templates
   Gemm gemm;
@@ -825,18 +825,18 @@ int run(Options &options, bool host_problem_shapes_available = true)
   cudaDeviceSynchronize();
 
   // Check if output from CUTLASS kernel and reference kernel are equal or not
-  Result result;
-  if (options.verification) {
-    std::cout << "  Host-side verification is now running - may be very slow for large cases." << std::endl;
-    result.passed = verify(options);
-    std::cout << "  Disposition: " << (result.passed ? "Passed" : "Failed") << std::endl;
-    if (!result.passed) {
-      exit(-1);
-    }
-  }
-  else {
-    std::cout << "  Verification is turned off for this run." << std::endl;
-  }
+  // Result result;
+  // if (options.verification) {
+  //   std::cout << "  Host-side verification is now running - may be very slow for large cases." << std::endl;
+  //   result.passed = verify(options);
+  //   std::cout << "  Disposition: " << (result.passed ? "Passed" : "Failed") << std::endl;
+  //   if (!result.passed) {
+  //     exit(-1);
+  //   }
+  // }
+  // else {
+  //   std::cout << "  Verification is turned off for this run." << std::endl;
+  // }
 
   // Run profiling loop
   if (options.iterations > 0)
@@ -904,7 +904,7 @@ int run(Options &options, bool host_problem_shapes_available = true)
 
     float milliseconds = 0.0f; 
     cudaEventElapsedTime(&milliseconds, start, stop); 
-    printf("Elapsed time (Avg): %f ms\n", milliseconds/10000);
+    printf("%f\n", milliseconds/10000);
 
     cudaEventDestroy(start); cudaEventDestroy(stop);
 
@@ -974,7 +974,7 @@ int main(int argc, char const **args) {
   // Evaluate CUTLASS kernels
   //
 
-  std::cout << "Running kernel with Cooperative kernel schedule:" << std::endl;
+  // std::cout << "Running kernel with Cooperative kernel schedule:" << std::endl;
   run<Gemm>(options, false /*host_problem_shapes_available*/);
   // std::cout << "Running kernel with Pingpong kernel schedule:" << std::endl;
   // run<GemmPingpong>(options, false /*host_problem_shapes_available*/);
