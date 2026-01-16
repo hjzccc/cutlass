@@ -841,21 +841,77 @@ int run(Options &options, bool host_problem_shapes_available = true)
   // Run profiling loop
   if (options.iterations > 0)
   {
-    GpuTimer timer;
-    timer.start();
-    for (int iter = 0; iter < options.iterations; ++iter) {
+    // GpuTimer timer;
+    // timer.start();
+    // for (int iter = 0; iter < options.iterations; ++iter) {
+    //   CUTLASS_CHECK(gemm.initialize(arguments, workspace.get()));
+    //   CUTLASS_CHECK(gemm.run(/* stream = */ nullptr, /* cuda_adapter = */ nullptr, /* launch_with_pdl = */ options.use_pdl));
+    // }
+    // timer.stop();
+
+    // // Compute average setup and runtime and GFLOPs.
+    // float elapsed_ms       = timer.elapsed_millis();
+    // result.avg_runtime_ms  = double(elapsed_ms) / double(options.iterations);
+    // result.gflops          = options.gflops(result.avg_runtime_ms / 1000.0, options.problem_sizes_host);
+
+    // std::cout << "  Avg runtime : " << result.avg_runtime_ms << " ms" << std::endl;
+    // std::cout << "  TFLOPS      : " << result.gflops / 1000.0 << std::endl;
+    // capture graph
+    cudaStream_t stream;
+    cudaStreamCreate(&stream);
+
+    for (int i=0; i < 2; i++){
       CUTLASS_CHECK(gemm.initialize(arguments, workspace.get()));
-      CUTLASS_CHECK(gemm.run(/* stream = */ nullptr, /* cuda_adapter = */ nullptr, /* launch_with_pdl = */ options.use_pdl));
+      CUTLASS_CHECK(gemm.run(/* stream = */ stream, /* cuda_adapter = */ nullptr, /* launch_with_pdl = */ options.use_pdl));
     }
-    timer.stop();
+    
+    cudaGraph_t graph;
+    cudaGraphExec_t graphExec;
+    
+    cudaStreamBeginCapture(stream, cudaStreamCaptureModeGlobal);
 
-    // Compute average setup and runtime and GFLOPs.
-    float elapsed_ms       = timer.elapsed_millis();
-    result.avg_runtime_ms  = double(elapsed_ms) / double(options.iterations);
-    result.gflops          = options.gflops(result.avg_runtime_ms / 1000.0, options.problem_sizes_host);
+    for (int i=0; i < 1000; i++){
+      CUTLASS_CHECK(gemm.initialize(arguments, workspace.get()));
+      CUTLASS_CHECK(gemm.run(/* stream = */ stream, /* cuda_adapter = */ nullptr, /* launch_with_pdl = */ options.use_pdl));
+    }
+        // cublasLtMatmul(ltHandle, operationDesc, alpha, A, Adesc, B, Bdesc, &beta, C, Cdesc, D, Ddesc,
+        //                              &heuristicResult.algo, workspace, workspaceSize, stream);
 
-    std::cout << "  Avg runtime : " << result.avg_runtime_ms << " ms" << std::endl;
-    std::cout << "  TFLOPS      : " << result.gflops / 1000.0 << std::endl;
+    cudaError_t captureErr = cudaStreamEndCapture(stream, &graph);
+    if (captureErr != cudaSuccess) {
+      printf("Capture failed: %s\n", cudaGetErrorString(captureErr));
+      return;
+    }
+    cudaError_t instErr = cudaGraphInstantiate(&graphExec, graph, nullptr, nullptr, 0);
+    if (instErr != cudaSuccess) {
+      printf("Instantiate failed: %s\n", cudaGetErrorString(instErr));
+      return;
+    }
+
+    // warmup
+    for (int i=0; i < 10; i++)
+        cudaGraphLaunch(graphExec, stream);
+    
+    cudaEvent_t start, stop; 
+    cudaEventCreate(&start); cudaEventCreate(&stop);
+    cudaEventRecord(start, stream);
+
+    for (int i=0; i < 10; i++)
+        cudaGraphLaunch(graphExec, stream);
+
+    cudaEventRecord(stop, stream);
+    cudaEventSynchronize(stop);
+
+    float milliseconds = 0.0f; 
+    cudaEventElapsedTime(&milliseconds, start, stop); 
+    printf("Elapsed time (Avg): %f ms\n", milliseconds/10000);
+
+    cudaEventDestroy(start); cudaEventDestroy(stop);
+
+    cudaGraphExecDestroy(graphExec);
+    cudaGraphDestroy(graph);
+    cudaStreamDestroy(stream);
+  
   }
 
   return 0;
@@ -920,8 +976,8 @@ int main(int argc, char const **args) {
 
   std::cout << "Running kernel with Cooperative kernel schedule:" << std::endl;
   run<Gemm>(options, false /*host_problem_shapes_available*/);
-  std::cout << "Running kernel with Pingpong kernel schedule:" << std::endl;
-  run<GemmPingpong>(options, false /*host_problem_shapes_available*/);
+  // std::cout << "Running kernel with Pingpong kernel schedule:" << std::endl;
+  // run<GemmPingpong>(options, false /*host_problem_shapes_available*/);
 #endif
 
   return 0;
